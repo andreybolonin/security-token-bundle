@@ -33,4 +33,14 @@ runs:
       run: |
         composer require --no-update "symfony/framework-bundle:${{ inputs.symfony-version }}"
         composer require --no-update "doctrine/orm:${{ inputs.doctrine-version }}"
+        if [[ "${{ inputs.symfony-version }}" == "4.4.*" ]]; then
+          # Symfony 4.4 is tested for backwards compatibility only. Permit these
+          # YAML advisories during resolution, but keep them visible in audits.
+          composer config --json audit.ignore '{
+            "PKSA-xz3r-9gp4-4m1z": {"apply": "block", "reason": "Symfony 4.4 compatibility CI only; audit reporting remains enabled."},
+            "PKSA-v5yj-8nmz-sk2q": {"apply": "block", "reason": "Symfony 4.4 compatibility CI only; audit reporting remains enabled."},
+            "PKSA-ft77-7h5f-p3r6": {"apply": "block", "reason": "Symfony 4.4 compatibility CI only; audit reporting remains enabled."},
+            "PKSA-b14r-zh1d-vdrc": {"apply": "block", "reason": "Symfony 4.4 compatibility CI only; audit reporting remains enabled."}
+          }'
+        fi
         composer update --no-interaction --no-progress --no-suggest
